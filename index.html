@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diet and Exercise Game</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+background-color: #f0f0f0;
+color: #333;
+padding: 20px;
+text-align: center;
+}
+#game-container {
+background-color: #fff;
+border-radius: 10px;
+padding: 20px;
+box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+button {
+background-color: #4CAF50;
+color: white;
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 16px;
+}
+button:hover {
+background-color: #45a049;
+}
+h1 {
+font-size: 2em;
+}
+#diet-result {
+margin-top: 20px;
+font-size: 1.2em;
+font-weight: bold;
+}
+#avatar-selection {
+margin-top: 20px;
+}
+#avatar-selection img {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+cursor: pointer;
+margin: 10px;
+}
+#avatar-selection img.selected {
+border: 3px solid #4CAF50;
+}
+#story-mode {
+margin-top: 20px;
+font-size: 1.1em;
+font-weight: normal;
+color: #555;
+}
+</style>
+</head>
+<body>
+
+<div id="game-container">
+<h1>Diet and Exercise Game</h1>
+
+<!-- Avatar Selection -->
+<p>Select an Avatar:</p>
+<div id="avatar-selection">
+    <img src="https://via.placeholder.com/80" alt="Avatar 1" onclick="selectAvatar('avatar1')" id="avatar1">
+    <img src="https://via.placeholder.com/80" alt="Avatar 2" onclick="selectAvatar('avatar2')" id="avatar2">
+    <img src="https://via.placeholder.com/80" alt="Avatar 3" onclick="selectAvatar('avatar3')" id="avatar3">
+</div>
+
+<!-- Question Section -->
+<div id="question-section" style="display: none;">
+    <p id="question">What is your age?</p>
+    <input type="number" id="answer" placeholder="Enter your age">
+    <button onclick="nextQuestion()">Next</button>
+</div>
+
+<div id="diet-result"></div>
+
+<!-- Story Mode -->
+<div id="story-mode"></div>
+
+</div>
+
+<script>
+let currentStep = 0;
+const answers = {};
+let avatarSelected = false;
+
+function selectAvatar(avatar) {
+    // Deselect all avatars
+    const avatars = document.querySelectorAll("#avatar-selection img");
+    avatars.forEach(img => img.classList.remove('selected'));
+
+    // Select the clicked avatar
+    document.getElementById(avatar).classList.add('selected');
+    avatarSelected = true;
+    document.getElementById('question-section').style.display = 'block';
+    document.getElementById('avatar-selection').style.display = 'none';
+    document.getElementById('story-mode').innerText = "Your adventure begins! Let's find out what your ideal diet and exercise plan is.";
+}
+
+function nextQuestion() {
+const input = document.getElementById('answer').value;
+
+if (input === '') {
+alert('Please answer the question.');
+return;
+}
+
+if (!avatarSelected) {
+alert('Please select an avatar first.');
+return;
+}
+
+// Save the answer
+if (currentStep === 0) {
+answers.age = input;
+document.getElementById('question').innerText = 'What is your gender? (M/F)';
+} else if (currentStep === 1) {
+answers.sex = input;
+document.getElementById('question').innerText = 'What is your weight in kg?';
+} else if (currentStep === 2) {
+answers.weight = input;
+document.getElementById('question').innerText = 'How much exercise do you do per week? (1-5)';
+} else if (currentStep === 3) {
+answers.exercise = input;
+showDietRecommendation();
+return;
+}
+
+currentStep++;
+document.getElementById('answer').value = '';
+}
+
+function showDietRecommendation() {
+let diet = '';
+const age = parseInt(answers.age);
+const weight = parseInt(answers.weight);
+const exercise = parseInt(answers.exercise);
+
+if (exercise <= 2) {
+diet = 'We recommend a low-calorie, high-protein diet.';
+} else {
+diet = 'We recommend a balanced diet with carbohydrates, proteins, and healthy fats.';
+}
+
+if (age >= 30) {
+diet += ' As we age, it’s important to care for our joints and metabolism.';
+}
+
+if (answers.sex.toLowerCase() === 'f') {
+diet += ' It’s also recommended to include more iron in your diet.';
+}
+
+document.getElementById('diet-result').innerText = `Recommendation: ${diet}`;
+document.getElementById('story-mode').innerText = `Your journey with a healthy lifestyle begins! You are ${answers.age} years old, and based on your preferences, we recommend the following: ${diet}`;
+}
+</script>
+
+</body>
+</html>
